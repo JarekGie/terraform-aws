@@ -53,7 +53,7 @@ jobs:
         run: |
           cd environments
           terraform plan -var-file=${{ env.TF_VAR_FILE }}
-          
+
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
