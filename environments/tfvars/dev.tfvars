@@ -1,9 +1,3 @@
-variable "bucket" {
-  default = "testowy-bucket-ernesta"
-}
-variable "dynamodb_table_name" {
-  default = "testowy-bucket-ernesta"
-}
-variable "region" {
-  default = "eu-central-1"
-}
+bucket              = "testowy-bucket-ernesta"
+dynamodb_table_name = "testowy-bucket-ernesta"
+region              = "eu-central-1"
