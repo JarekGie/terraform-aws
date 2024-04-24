@@ -57,3 +57,4 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'merge'
         working-directory: ${{ github.event.inputs.working-directory }}
         run: terraform apply -auto-approve -var-file=${{ env.TF_VAR_FILE }}
+
