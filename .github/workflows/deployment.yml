@@ -39,11 +39,11 @@ jobs:
         with:
           terraform_version: '1.5.0'  # zmień na wersję, której używasz
       - name: Set TF_VAR_FILE
-          run: |
-            if [ -z "${{ env.TF_VAR_FILE }}" ]; then
-              echo "TF_VAR_FILE not set, using input env"
-              echo "TF_VAR_FILE=environments/tfvars/${{ github.event.inputs.env }}.tfvars" >> $GITHUB_ENV
-            fi
+        run: |
+          if [ -z "${{ env.TF_VAR_FILE }}" ]; then
+             echo "TF_VAR_FILE not set, using input env"
+             echo "TF_VAR_FILE=environments/tfvars/${{ github.event.inputs.env }}.tfvars" >> $GITHUB_ENV
+          fi
       - name: Terraform Init
         run: |
           cd environments
@@ -52,7 +52,7 @@ jobs:
       - name: Terraform Validate
         run: |
           cd environments
-          terraform validate -var-file=${{ env.TF_VAR_FILE }}
+          terraform validate
 
       - name: Terraform Plan
         run: |
