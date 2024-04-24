@@ -28,7 +28,7 @@ jobs:
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'eu-central-1'  # zmień na swój region
-      TF_VAR_FILE: 'environments/tfvars/${{ github.event.inputs.env }}.tfvars'
+      TF_VAR_FILE: 'tfvars/${{ github.event.inputs.env }}.tfvars'
 
     steps:
       - name: Checkout
@@ -42,7 +42,7 @@ jobs:
         run: |
           if [ -z "${{ env.TF_VAR_FILE }}" ]; then
              echo "TF_VAR_FILE not set, using input env"
-             echo "TF_VAR_FILE=environments/tfvars/${{ github.event.inputs.env }}.tfvars" >> $GITHUB_ENV
+             echo "TF_VAR_FILE=tfvars/${{ github.event.inputs.env }}.tfvars" >> $GITHUB_ENV
           fi
       - name: Terraform Init
         run: |
