@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'eu-central-1'  # zmień na swój region
       TF_VAR_FILE: 'tfvars/${{ github.event.inputs.env }}.tfvars'
@@ -55,7 +55,7 @@ jobs:
           terraform plan -var-file=${{ env.TF_VAR_FILE }}
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'merge'
         run: |
           cd environments
           terraform apply -auto-approve -var-file=${{ env.TF_VAR_FILE }}
