@@ -55,7 +55,7 @@ jobs:
           terraform plan -var-file=${{ env.TF_VAR_FILE }}
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'merge'
         run: |
           cd environments
           terraform apply -auto-approve -var-file=${{ env.TF_VAR_FILE }}
