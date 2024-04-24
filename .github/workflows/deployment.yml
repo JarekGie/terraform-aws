@@ -28,7 +28,7 @@ jobs:
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'eu-central-1'  # zmień na swój region
-      TF_VAR_FILE: '${{ github.event.inputs.env }}.tfvars'
+      TF_VAR_FILE: 'environments/tfvars/${{ github.event.inputs.env }}.tfvars'
 
     steps:
       - name: Checkout
@@ -37,17 +37,29 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: '1.0.0'  # zmień na wersję, której używasz
-
+          terraform_version: '1.5.0'  # zmień na wersję, której używasz
+      - name: Set TF_VAR_FILE
+          run: |
+            if [ -z "${{ env.TF_VAR_FILE }}" ]; then
+              echo "TF_VAR_FILE not set, using input env"
+              echo "TF_VAR_FILE=environments/tfvars/${{ github.event.inputs.env }}.tfvars" >> $GITHUB_ENV
+            fi
       - name: Terraform Init
-        run: terraform init
+        run: |
+          cd environments
+          terraform init
 
       - name: Terraform Validate
-        run: terraform validate
+        run: |
+          cd environments
+          terraform validate -var-file=${{ env.TF_VAR_FILE }}
 
       - name: Terraform Plan
-        run: terraform plan
-
+        run: |
+          cd environments
+          terraform plan -var-file=${{ env.TF_VAR_FILE }}
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -var-file=${{ env.TF_VAR_FILE }}
+        run: |
+          cd environments
+          terraform apply -auto-approve -var-file=${{ env.TF_VAR_FILE }}
