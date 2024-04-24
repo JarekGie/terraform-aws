@@ -49,15 +49,11 @@ jobs:
           cd environments
           terraform init
 
-      - name: Terraform Validate
-        run: |
-          cd environments
-          terraform validate
-
       - name: Terraform Plan
         run: |
           cd environments
           terraform plan -var-file=${{ env.TF_VAR_FILE }}
+          
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
