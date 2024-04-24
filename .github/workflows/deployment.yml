@@ -17,6 +17,7 @@ on:
         description: 'Environment (e.g., dev, staging, prod)'
         required: true
         default: 'dev'
+      working-directory: 'environments/'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -25,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'eu-central-1'  # zmień na swój region
       TF_VAR_FILE: 'tfvars/${{ github.event.inputs.env }}.tfvars'
@@ -45,17 +46,14 @@ jobs:
              echo "TF_VAR_FILE=tfvars/${{ github.event.inputs.env }}.tfvars" >> $GITHUB_ENV
           fi
       - name: Terraform Init
-        run: |
-          cd environments
-          terraform init
+        working-directory: ${{ github.event.inputs.working-directory }}
+        run: terraform init
 
       - name: Terraform Plan
-        run: |
-          cd environments
-          terraform plan -var-file=${{ env.TF_VAR_FILE }}
+        working-directory: ${{ github.event.inputs.working-directory }}
+        run: terraform plan -var-file=${{ env.TF_VAR_FILE }}
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          cd environments
-          terraform apply -auto-approve -var-file=${{ env.TF_VAR_FILE }}
+        if: github.ref == 'refs/heads/main' && github.event_name == 'merge'
+        working-directory: ${{ github.event.inputs.working-directory }}
+        run: terraform apply -auto-approve -var-file=${{ env.TF_VAR_FILE }}
