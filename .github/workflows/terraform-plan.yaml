@@ -10,34 +10,32 @@ on:
         required: true
         default: 'dev'
 
-env:
-   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-   AWS_DEFAULT_REGION: 'eu-central-1'  # zmień na swój region
-   TF_VAR_FILE: 'tfvars/${{ github.event.inputs.env }}.tfvars'
-   WORKING_DIRECTORY: 'environments'
-
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
-  permissions:
-    contents: read
-    pull-request: write
 
-  env:
-    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    AWS_DEFAULT_REGION: 'eu-central-1'  # zmień na swój region
-    TF_VAR_FILE: 'tfvars/${{ github.event.inputs.env }}.tfvars'
-    WORKING_DIRECTORY: 'environments'
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: 'eu-central-1'  # zmień na swój region
+      TF_VAR_FILE: 'tfvars/dev.tfvars'
+      WORKING_DIRECTORY: 'environments'
 
-  steps:
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
           terraform_version: '1.5.0'  # zmień na wersję, której używasz
+
+      - name: Terraform Init
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: terraform plan -var-file=${{ env.TF_VAR_FILE }}
+
